@@ -95,10 +95,10 @@ class DemoDownloader:
             if match["status"] != "pending":
                 continue
 
-            file_name = match["match_url"].split("/")[-1]
+            file_name = match["match_url"].split("/")[-1] + ".rar"
             file_path = os.path.join(self.output_dir, file_name)
 
-            print(f"Downloading {file_name} ({match["demos_url"]})")
+            print(f"Downloading {file_name} ({match['demos_url']})")
             tries = 1
 
             while tries <= self.max_retries:
