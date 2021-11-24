@@ -4,6 +4,7 @@ import json
 import os
 import requests
 import sys
+import ssl
 
 from optparse import OptionParser
 from pathlib import Path
@@ -69,7 +70,7 @@ class DemoDownloader:
 
     def download_from_url_bypass_cloudflare(self, scraper, url: str, fname: str):
         """ Downloads a file from a URL """
-        resp = scraper.get(url, stream=True)
+        resp = scraper.get(url, verify=False, stream=True)
 
         total = int(resp.headers.get("content-length", 0))
         print(f"Downloading demofile '{url}' from HLTV with {total} bytes")
@@ -87,8 +88,13 @@ class DemoDownloader:
 
     def download_demos(self):
         """ Downloads demo files marked as pending in progress file """
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
         scraper = cloudscraper.create_scraper(
-            browser={"browser": "chrome", "platform": "windows", "desktop": True}
+            browser={"browser": "chrome", "platform": "windows", "desktop": True},
+            ssl_context=ctx
         )
 
         for index, match in enumerate(self.progress["matches"]):
